@@ -5,14 +5,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-@JdbcTest
+
 @Import(JdbcIngredientRepository.class)
-@SpringBootTest(classes = )
+@SpringBootTest(classes = JdbcIngredientRepositoryTest.class)
+@ComponentScan(basePackages = "com.example.tacocloud")
 class JdbcIngredientRepositoryTest {
 
     @Autowired
