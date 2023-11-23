@@ -2,8 +2,11 @@ package com.example.tacocloud;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.example.tacocloud.Ingredient.Type;
 import com.example.tacocloud.Ingredient;
 
+import javax.validation.Valid;
 
 
 @Slf4j
@@ -20,7 +24,7 @@ import com.example.tacocloud.Ingredient;
 @RequestMapping("/design")
 @SessionAttributes("tacoOrder")
 public class DesignTacoController {
-    @ModelAttribute
+  /*  @ModelAttribute
     public void addIngredientsToModel(Model model) {
         List<Ingredient> ingredients = Arrays.asList(
                 new Ingredient("FLTO", "Flour Tortilla", Type.WRAP),
@@ -40,6 +44,24 @@ public class DesignTacoController {
                     filterByType(ingredients, type));
         }
     }
+
+   */
+
+    private final IngredientRepository ingredientRepo;
+    @Autowired
+    public DesignTacoController(
+            IngredientRepository ingredientRepo) {
+        this.ingredientRepo = ingredientRepo;
+    }
+    @ModelAttribute
+    public void addIngredientsToModel(Model model) {
+        List<Ingredient> ingredients = ingredientRepo.findAll();
+        Type[] types = Ingredient.Type.values();
+        for (Type type : types) {
+            model.addAttribute(type.toString().toLowerCase(),
+                    filterByType(ingredients, type));
+        }
+    }
     @ModelAttribute(name = "tacoOrder")
     public TacoOrder order() {
         return new TacoOrder();
@@ -53,8 +75,11 @@ public class DesignTacoController {
         return "design";
     }
     @PostMapping
-    public String processTaco(Taco taco,
+    public String processTaco(@Valid Taco taco, Errors errors,
                               @ModelAttribute TacoOrder tacoOrder) {
+        if (errors.hasErrors()) {
+            return "design";
+        }
         tacoOrder.addTaco(taco);
         log.info("Processing taco: {}", taco);
         return "redirect:/orders/current";
