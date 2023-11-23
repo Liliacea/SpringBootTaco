@@ -12,7 +12,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 @JdbcTest
 @Import(JdbcIngredientRepository.class)
-@SpringBootTest(classes = SpringLoggerApplication.class)
+@SpringBootTest(classes = )
 class JdbcIngredientRepositoryTest {
 
     @Autowired
@@ -24,8 +24,8 @@ class JdbcIngredientRepositoryTest {
 
     @Test
     void findAll() {
-        List<Ingredient> animals = dao.findAll();
-        Assertions.assertEquals(10, animals.size());
+        List<Ingredient> ingredients = dao.findAll();
+        Assertions.assertEquals(10, ingredients.size());
     }
 
     @Test
